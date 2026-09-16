@@ -34,10 +34,10 @@ import lombok.ToString;
 @ToString
 public class WorkFile {
 
-    @Id
-    @Column(name = "workfile_no")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer taskFileNo;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "taskfile_no")
+	private Integer taskFileNo;
 
     @Schema(description = "파일경로")
     @Column(name = "file_path", length = 500)
@@ -51,9 +51,6 @@ public class WorkFile {
     @Column(name = "change_name", length = 225, nullable = false)
     private String changeName;
 
-    @Schema(description = "첨부파일 등록일시")
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
 
     // DB에 file_size 컬럼이 없어 영속화하지 않는다(응답 전용/미사용 필드로만 유지).
     @Schema(description = "파일용량")
@@ -63,8 +60,8 @@ public class WorkFile {
     @Schema(description = "상태")
     @Column(name = "status", columnDefinition = "VARCHAR(1) DEFAULT 'Y'")
     private String status;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_no", nullable = false)
-    private com.kh.workflow.task.model.vo.Task task;
+    @JoinColumn(name = "work_no", nullable = false)
+    private Work work;
 }

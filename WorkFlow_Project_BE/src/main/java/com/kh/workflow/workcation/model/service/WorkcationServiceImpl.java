@@ -243,14 +243,10 @@ public class WorkcationServiceImpl implements WorkcationService {
 		info.setEndAt(endAt);
 		info.setEmployee(employee); // Employee 연관 객체 세팅
 
-		info.setApproverState("W");// JPA가 인서트할때 W지정 등록
+		info.setApproverState("W");
 
 		WorkcationInfo workcation = workcationDao.save(info);
-
-		// BUG-009: 업무계획을 workcation_info.work_plan 텍스트로만 저장하고 실제
-		// work/task 레코드를 만들지 않아, "내 워케이션" 화면의 업무 진행률 변경이
-		// 동작할 수 없었다(진행률을 저장할 실제 task_no가 존재하지 않았음). 신청 시점에
-		// 실제 Work 1건 + 업무계획 항목별 Task를 생성해 진행률 추적이 가능하도록 한다.
+		
 		if (planList != null && !planList.isEmpty()) {
 
 			Work work = new Work();
@@ -260,7 +256,9 @@ public class WorkcationServiceImpl implements WorkcationService {
 			for (Map<String, Object> planItem : planList) {
 				String taskName = (String) planItem.get("taskName");
 				Object daysObj = planItem.get("days");
-				int days = daysObj != null ? Integer.parseInt(daysObj.toString()) : 1;
+				int days = daysObj != null ? Integer
+											.parseInt(daysObj
+											.toString()) : 1;
 
 				Task task = new Task();
 				task.setWork(work);
@@ -1005,7 +1003,7 @@ public class WorkcationServiceImpl implements WorkcationService {
 				}
 
 				// BUG: WorkFile은 work_no가 아니라 task_no로 Task를 참조하므로 task 단위로 조회한다.
-				List<WorkFile> files = workFileDao.findByTaskTaskNo(task.getTaskNo());
+				List<WorkFile> files = workFileDao.findByWorkWorkNo(task.getTaskNo());
 
 				for (WorkFile file : files) {
 
@@ -1169,7 +1167,7 @@ public class WorkcationServiceImpl implements WorkcationService {
 			workFile.setStatus("Y");
 
 			// 실제 work_file 테이블은 work_no가 아닌 task_no로 task를 참조한다
-			workFile.setTask(task);
+			workFile.setWork(work);
 
 			workFileDao.save(workFile);
 		}
@@ -1343,7 +1341,7 @@ public class WorkcationServiceImpl implements WorkcationService {
 
 		WorkFile workFile = new WorkFile();
 
-		workFile.setTask(task);
+		workFile.setWork(work);
 		workFile.setOriginName(originName);
 		workFile.setChangeName(changeName);
 		workFile.setFilePath("/uploads/work/");
@@ -1360,10 +1358,10 @@ public class WorkcationServiceImpl implements WorkcationService {
 				.orElseThrow(() -> new RuntimeException("첨부파일을 찾을 수 없습니다."));
 
 		// BUG-09: 워케이션 기간이 끝난 뒤에도 업무 첨부파일을 계속 삭제할 수 있었다.
-		if (workFile.getTask() != null && workFile.getTask().getWork() != null
-				&& workFile.getTask().getWork().getWorkcationInfo() != null) {
+		if (workFile.getWork() != null && workFile.getWork() != null
+				&& workFile.getWork().getWorkcationInfo() != null) {
 			LocalDateTime now = LocalDateTime.now();
-			LocalDateTime endAt = workFile.getTask().getWork().getWorkcationInfo().getEndAt();
+			LocalDateTime endAt = workFile.getWork().getWorkcationInfo().getEndAt();
 
 			if (endAt != null && now.isAfter(endAt)) {
 				throw new IllegalArgumentException("워케이션 기간이 종료되어 첨부파일을 삭제할 수 없습니다.");

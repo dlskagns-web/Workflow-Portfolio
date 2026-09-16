@@ -205,7 +205,7 @@ public class TaskServiceImpl implements TaskService {
 
 	            List<Map<String, Object>> fileList = new ArrayList<>();
 
-	            List<WorkFile> files = workFileDao.findByTaskTaskNo(task.getTaskNo());
+	            List<WorkFile> files = workFileDao.findByWorkWorkNo(task.getTaskNo());
 
 	            for (WorkFile file : files) {
 

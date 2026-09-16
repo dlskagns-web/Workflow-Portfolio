@@ -583,7 +583,7 @@ public class WorkcationController {
 		Employee loginEmployee = employeeDao.findByEmpId(empId)
 				.orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
-		Employee fileOwner = workFile.getTask().getWork().getWorkcationInfo().getEmployee();
+		Employee fileOwner = workFile.getWork().getWorkcationInfo().getEmployee();
 
 		if (!canAccessEmployeeScope(fileOwner, loginEmployee)) {
 			throw new AccessDeniedException("해당 첨부파일에 접근할 권한이 없습니다.");
@@ -675,7 +675,7 @@ public class WorkcationController {
 		Employee loginEmployee = employeeDao.findByEmpId(empId)
 				.orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
-		Employee fileOwner = workFile.getTask().getWork().getWorkcationInfo().getEmployee();
+		Employee fileOwner = workFile.getWork().getWorkcationInfo().getEmployee();
 
 		if (!canAccessEmployeeScope(fileOwner, loginEmployee)) {
 			throw new AccessDeniedException("해당 첨부파일을 삭제할 권한이 없습니다.");
