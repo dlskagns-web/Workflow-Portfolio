@@ -1,0 +1,432 @@
+/* BUG-009: 이 규칙이 원래 .workcation-form-table에도 display:flex를 적용하고 있었다.
+   테이블에 display:flex가 걸리면(아래 77번째 줄 주석 "display: flex 절대 금지"가 원래
+   의도했던 바) 표는 table-layout 대신 flex 레이아웃으로 계산되어 열 너비가 콘텐츠에 따라
+   불안정해지고, 거점 유형(office/accommodation)을 바꿔 라벨/옵션 텍스트가 달라질 때마다
+   입력창/셀렉트 폭이 흔들리며 글자가 잘리는 원인이었다. table에는 display:flex를 적용하지
+   않도록 .task-plan-box / .all-price-container만 남긴다(둘 다 아래에서 display:flex를
+   다시 선언하므로 동작은 그대로 유지된다). */
+.task-plan-box,
+.all-price-container {
+    margin: auto;
+    justify-content: center;
+    display: flex;
+}
+
+.workcation-form-table th {
+    text-align: center;
+    width: 90px;
+}
+
+.plus-btn-group {
+    justify-content: center;
+    padding: 40px 10px;
+    display: flex;
+}
+
+.workcatrion-enroll-container {
+    width: 684px; 
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 버튼 그룹: 부모(684px) 폭 안에서 우측 끝에 정확히 정렬 */
+.common-btn-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0 0 10px 0;
+}
+
+/* 제출/뒤로가기 버튼 */
+.insert-btn,
+.back-space {
+    margin: 0;
+    width: 120px;
+    height: 42px;
+    padding: 0 12px;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    transition: background-color 0.2s ease;
+}
+
+.insert-btn {
+    background-color: var(--wf-primary);
+    color: #ffffff;
+}
+
+.insert-btn:hover {
+    background-color: var(--wf-primary-dark);
+}
+
+.back-space {
+    background-color: #ffffff;
+    border-color: var(--wf-gray-300);
+    color: var(--wf-text-secondary);
+}
+
+.back-space:hover {
+    background-color: var(--wf-gray-50);
+}
+
+/* 테이블: display: flex 절대 금지 (테이블 속성 유지) */
+.workcation-form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.workcation-form-table th {
+    text-align: center;
+    width: 90px;
+}
+
+.task-plan-box {
+    display: flex;
+    justify-content: center;
+}
+
+.task-plan-list {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.plan-item {
+    border: 1px solid;
+    width: 500px;
+    list-style: none;
+    padding: 10px;
+}
+
+.all-price-container {
+    width: 600px;
+    margin: 20px auto 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* =========================
+   워케이션 신청/수정 폼 - 테이블/버튼 보강
+   (Enroll/Update 두 컴포넌트가 동일한 클래스명을 공유한다)
+========================= */
+
+.workcation-form-table {
+    background: var(--wf-white);
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius);
+    overflow: hidden;
+}
+
+.workcation-form-table th,
+.workcation-form-table td {
+    padding: 10px 12px;
+
+    border-bottom: 1px solid var(--wf-border);
+
+    font-size: 13px;
+}
+
+.workcation-form-table th {
+    background: var(--wf-table-header-bg);
+    color: var(--wf-text-secondary);
+    font-weight: 700;
+}
+
+.workcation-form-table td {
+    color: var(--wf-text-primary);
+}
+
+.workcation-form-table input {
+    /* BUG-009: 너비 지정이 없으면 브라우저 기본 폭으로 렌더링되어 셀 밖으로 값이
+       넘쳐 보이는 문제가 있었다 - 셀 너비에 맞춰 채우도록 고정한다.
+       select에는 적용하지 않는다: "지역" 셀처럼 select 두 개를 .drop-group(flex)로
+       나란히 배치하는 곳에서 width:100%를 주면 각 select가 flex 폭의 절반으로
+       강제로 줄어들어 오히려 "제주도"/"서귀포시" 같은 긴 지역명이 잘리는
+       회귀가 발생했다. select는 기본 동작(선택된 option 텍스트 기준 크기)이
+       더 안전하다. */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.workcation-form-table input,
+.workcation-form-table select {
+    height: 36px;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--wf-gray-300);
+    border-radius: 7px;
+
+    font-size: 13px;
+
+    outline: none;
+}
+
+.workcation-form-table input:focus,
+.workcation-form-table select:focus {
+    border-color: var(--wf-primary);
+}
+
+.radio-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-right: 12px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+/* 옵션(체험/맛집/관광지) 추가 버튼 */
+.add-option-btn {
+    height: 34px;
+
+    padding: 0 14px;
+
+    border: 1px dashed var(--wf-gray-300);
+    border-radius: 7px;
+
+    background: var(--wf-gray-50);
+    color: var(--wf-text-secondary);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.add-option-btn:hover:not(:disabled) {
+    border-color: var(--wf-primary);
+    color: var(--wf-primary);
+}
+
+.add-option-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.optionBtn-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.remove-btn {
+    width: 26px;
+    height: 26px;
+
+    border: 1px solid var(--wf-gray-300);
+    border-radius: 50%;
+
+    background: #ffffff;
+    color: var(--wf-danger);
+
+    font-size: 12px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.remove-btn:hover {
+    background: var(--wf-danger-bg);
+}
+
+/* 업무 계획 입력 영역 */
+.task-plan-container h3 {
+    margin: 0 0 14px;
+
+    color: var(--wf-text-primary);
+
+    font-size: 16px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+.task-paln-input {
+    width: 600px;
+
+    margin: 0 auto;
+}
+
+.task-plan-box {
+    gap: 8px;
+
+    margin-bottom: 10px;
+}
+
+.task-plan-box input {
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--wf-gray-300);
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    outline: none;
+}
+
+.task-plan-box input:focus {
+    border-color: var(--wf-primary);
+}
+
+.add-btn {
+    height: 40px;
+
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: var(--wf-primary);
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.add-btn:hover {
+    background: var(--wf-primary-dark);
+}
+
+.plan-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border: 1px solid var(--wf-border);
+    border-radius: 8px;
+
+    margin-bottom: 6px;
+    padding: 10px 14px;
+
+    color: var(--wf-text-primary);
+
+    font-size: 13px;
+}
+
+.plan-item .delete-btn {
+    width: 22px;
+    height: 22px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: var(--wf-danger-bg);
+    color: var(--wf-danger);
+
+    font-size: 11px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+/* 지출/지원금 요약 박스 */
+.left-price-box {
+    flex: 1;
+    max-width: 300px;
+
+    padding: 20px;
+
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius);
+
+    background: var(--wf-white);
+    box-shadow: var(--wf-shadow-sm);
+
+    box-sizing: border-box;
+}
+
+.left-price-box h3 {
+    margin: 0 0 14px;
+
+    color: var(--wf-text-primary);
+
+    font-size: 15px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+.left-price-box hr {
+    margin: 12px 0;
+
+    border: none;
+    border-top: 1px solid var(--wf-border);
+}
+
+.left-price-row,
+.right-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 8px 0;
+
+    font-size: 13px;
+
+    color: var(--wf-text-secondary);
+}
+
+.right-price-row.total {
+    color: var(--wf-text-primary);
+    font-weight: 700;
+}
+
+.left-price-input input {
+    width: 110px;
+    height: 32px;
+
+    padding: 0 8px;
+
+    border: 1px solid var(--wf-gray-300);
+    border-radius: 7px;
+
+    text-align: right;
+
+    font-size: 13px;
+
+    outline: none;
+}
+
+.left-price-input input:focus {
+    border-color: var(--wf-primary);
+}
+
+.left-price-total,
+.right-price-pay {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: var(--wf-text-primary);
+}
+
+.right-price-pay strong {
+    color: var(--wf-primary);
+}

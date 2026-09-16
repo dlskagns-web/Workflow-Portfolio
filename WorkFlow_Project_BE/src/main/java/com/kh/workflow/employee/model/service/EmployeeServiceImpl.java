@@ -1,0 +1,812 @@
+package com.kh.workflow.employee.model.service;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.kh.workflow.config.jwt.JwtUtil;
+import com.kh.workflow.employee.model.dao.EmployeeDao;
+import com.kh.workflow.employee.model.dao.VerificationDao;
+import com.kh.workflow.employee.model.dto.ChangePasswordRequest;
+import com.kh.workflow.employee.model.dto.EmployeeCreateRequest;
+import com.kh.workflow.employee.model.dto.EmployeeCreateResponse;
+import com.kh.workflow.employee.model.dto.EmployeeResponse;
+import com.kh.workflow.employee.model.dto.EmployeeRoleUpdateRequest;
+import com.kh.workflow.employee.model.dto.EmployeeUpdateRequest;
+import com.kh.workflow.employee.model.dto.FindIdRequest;
+import com.kh.workflow.employee.model.dto.FindIdResponse;
+import com.kh.workflow.employee.model.dto.LoginRequest;
+import com.kh.workflow.employee.model.dto.LoginResponse;
+import com.kh.workflow.employee.model.dto.PasswordResetRequest;
+import com.kh.workflow.employee.model.dto.PasswordResetVerifyRequest;
+import com.kh.workflow.employee.model.vo.Employee;
+import com.kh.workflow.employee.model.vo.Verification;
+import com.kh.workflow.mail.MailService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class EmployeeServiceImpl implements EmployeeService{
+
+	@Autowired
+	private EmployeeDao employeeDao;
+
+	@Autowired
+	private VerificationDao verificationDao;
+
+	private final PasswordEncoder passwordEncoder;
+
+    private final TemporaryPasswordGenerator passwordGenerator;
+
+    private final MailService mailService;
+
+    private final JwtUtil jwtUtil;
+
+    private static final int VERIFICATION_CODE_VALID_MINUTES = 5;
+
+    private final SecureRandom secureRandom = new SecureRandom();
+
+    // =========================================================
+    // USR-001
+    // 계정 등록
+    // =========================================================
+
+    @Override
+    @Transactional
+    public EmployeeCreateResponse createEmployee(EmployeeCreateRequest request) {
+
+    	// 사번(로그인 아이디) 중복 확인
+        if (employeeDao.existsByEmpId(
+                request.getEmpId()
+        )) {
+
+            throw new IllegalArgumentException(
+                    "이미 등록된 사번입니다."
+            );
+        }
+
+
+        // 이메일 중복 확인
+        if (request.getEmail() != null
+                && employeeDao.existsByEmail(
+                        request.getEmail()
+                )) {
+
+            throw new IllegalArgumentException(
+                    "이미 등록된 이메일입니다."
+            );
+        }
+
+
+        // 임시 비밀번호 생성
+        String temporaryPassword =
+                passwordGenerator.generate(10);
+
+
+        // BCrypt 암호화
+        String encodedPassword =
+                passwordEncoder.encode(
+                        temporaryPassword
+                );
+    	
+        // 1. Request DTO → Entity
+        Employee employee = new Employee();
+
+        employee.setEmpId(request.getEmpId());
+        employee.setEmpPwd(encodedPassword);
+        employee.setEmpName(request.getEmpName());
+        employee.setPhone(request.getPhone());
+        employee.setEmail(request.getEmail());
+        employee.setAddress(request.getAddress());
+        employee.setDepId(request.getDepId());
+        employee.setAuthCode(request.getAuthCode());
+        employee.setJobCode(request.getJobCode());
+
+        // 2. 디버깅
+        System.out.println("===== 직원 등록 데이터 =====");
+        System.out.println("empId    : " + employee.getEmpId());
+        System.out.println("empName  : " + employee.getEmpName());
+        System.out.println("depId    : " + employee.getDepId());
+        System.out.println("authCode : " + employee.getAuthCode());
+        System.out.println("jobCode  : " + employee.getJobCode());
+        System.out.println("password  : " + temporaryPassword);
+        System.out.println("===========================");
+
+        // 3. Entity 저장
+        Employee savedEmployee = employeeDao.save(employee);
+
+        // 임시 비밀번호 이메일 발송
+        if (savedEmployee.getEmail() != null) {
+
+            mailService.sendTemporaryPassword(
+                    savedEmployee.getEmail(),
+                    savedEmployee.getEmpName(),
+                    savedEmployee.getEmpId(),
+                    temporaryPassword
+            );
+        }
+        
+        // 4. Response DTO 반환
+        return new EmployeeCreateResponse(
+                savedEmployee.getEmpNo(),
+                savedEmployee.getEmpId(),
+                savedEmployee.getEmpName()
+        );
+    }
+    
+    /*
+    @Override
+    @Transactional
+    public EmployeeCreateResponse createEmployee(
+            EmployeeCreateRequest request
+    ) {
+
+        // 사번(로그인 아이디) 중복 확인
+        if (employeeDao.existsByEmpId(
+                request.getEmpId()
+        )) {
+
+            throw new IllegalArgumentException(
+                    "이미 등록된 사번입니다."
+            );
+        }
+
+
+        // 이메일 중복 확인
+        if (request.getEmail() != null
+                && employeeDao.existsByEmail(
+                        request.getEmail()
+                )) {
+
+            throw new IllegalArgumentException(
+                    "이미 등록된 이메일입니다."
+            );
+        }
+
+
+        // 임시 비밀번호 생성
+        String temporaryPassword =
+                passwordGenerator.generate(10);
+
+
+        // BCrypt 암호화
+        String encodedPassword =
+                passwordEncoder.encode(
+                        temporaryPassword
+                );
+
+
+        // Employee Entity 생성
+        Employee employee =
+                Employee.builder()
+                        .empId(request.getEmpId())
+                        .empPwd(encodedPassword)
+                        .empName(request.getEmpName())
+                        .phone(request.getPhone())
+                        .email(request.getEmail())
+                        .address(request.getAddress())
+                        .status("Y")
+                        .pwChgRequired(true)
+                        .depId(request.getDepId())
+                        .authCode(request.getAuthCode())
+                        .jobCode(request.getJobCode())
+                        .build();
+
+        System.out.println("===== 직원 등록 데이터 =====");
+        System.out.println("empId    : " + employee.getEmpId());
+        System.out.println("empName  : " + employee.getEmpName());
+        System.out.println("depId    : " + employee.getDepId());
+        System.out.println("authCode : " + employee.getAuthCode());
+        System.out.println("jobCode  : " + employee.getJobCode());
+        System.out.println("===========================");
+
+        // DB 저장
+        Employee savedEmployee =
+        		employeeDao.save(employee);
+
+
+        // 임시 비밀번호 이메일 발송
+        if (savedEmployee.getEmail() != null) {
+
+            mailService.sendTemporaryPassword(
+                    savedEmployee.getEmail(),
+                    savedEmployee.getEmpName(),
+                    savedEmployee.getEmpId(),
+                    temporaryPassword
+            );
+        }
+    }
+    
+    */
+    
+    @Override
+    public boolean checkEmpIdDuplicate (String empId) {
+    	
+    	return employeeDao.existsByEmpId(empId);
+    }
+
+
+    // =========================================================
+    // USR-002
+    // 사용자 로그인
+    // =========================================================
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+    	
+        Employee employee =
+        		employeeDao.findByEmpId(request.getEmpId())
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "아이디 또는 비밀번호가 올바르지 않습니다."
+                                )
+                        );
+
+
+        // 계정 상태 확인
+        if (!"Y".equals(employee.getStatus())) {
+
+            throw new IllegalStateException(
+                    "현재 사용할 수 없는 계정입니다."
+            );
+        }
+
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(
+        		request.getPassword(),
+                employee.getEmpPwd()
+        )) {
+
+            throw new IllegalArgumentException(
+                    "아이디 또는 비밀번호가 올바르지 않습니다."
+            );
+        }
+
+
+        // JWT 생성
+        String accessToken = jwtUtil.generateToken(
+                employee.getEmpId(),
+                employee.getAuthCode(),
+                employee.getEmpNo()
+        );
+
+        return new LoginResponse(
+                accessToken,
+                employee.getEmpNo(),
+                employee.getEmpId(),
+                employee.getEmpName(),
+                employee.getAuthCode(),
+                employee.getDepId(),
+                employee.getJobCode(),
+                employee.getPwChgRequired()
+        );
+    }
+
+
+    // =========================================================
+    // USR-003
+    // 사용자 로그아웃
+    // =========================================================
+
+    @Override
+    public void logout(
+            Integer empNo
+    ) {
+
+        /*
+         * JWT 방식에서는 서버에서 별도의 세션 삭제가
+         * 필요하지 않을 수 있음.
+         *
+         * 현재는 서비스 메서드만 정의하고
+         * 실제 로그아웃 처리는 Security/JWT 구조에 맞춰 구현.
+         */
+    }
+
+
+    // =========================================================
+    // USR-004
+    // 비밀번호 재설정
+    // =========================================================
+
+    @Override
+    @Transactional
+    public EmployeeResponse changePassword(
+    		String empId, ChangePasswordRequest request
+    ) {
+
+        Employee employee =
+                employeeDao.findByEmpId(empId)
+                .orElseThrow(() ->
+                    new IllegalArgumentException(
+                        "사용자를 찾을 수 없습니다."
+                    )
+                );
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(
+                request.getCurrentPassword(),
+                employee.getEmpPwd()
+        )) {
+
+            throw new IllegalArgumentException(
+                "현재 비밀번호가 일치하지 않습니다."
+            );
+        }
+
+        // 새 비밀번호 암호화
+        String encodedPassword =
+                passwordEncoder.encode(
+                    request.getNewPassword()
+                );
+
+        employee.setEmpPwd(encodedPassword);
+
+        // 비밀번호 변경 필요 상태 해제
+        employee.setPwChgRequired(false);
+
+        Employee saved = employeeDao.save(employee);
+
+        // BUG-08: 기존에는 메시지만 반환해 프런트가 로그인 상태(localStorage/React
+        // state)의 pwChgRequired를 갱신할 방법이 없었다 - 갱신된 사용자 정보를
+        // 반환해 로그인 응답과 동일한 형태로 프런트 상태를 그대로 교체할 수 있게 한다.
+        return convertToResponse(saved);
+    }
+    
+//    @Override
+//    @Transactional
+//    public void resetPassword(
+//            Integer empNo
+//    ) {
+//
+//        Employee employee =
+//        		employeeDao.findById(empNo)
+//                        .orElseThrow(() ->
+//                                new IllegalArgumentException(
+//                                        "존재하지 않는 사용자입니다."
+//                                )
+//                        );
+//
+//
+//        // 새로운 임시 비밀번호 생성
+//        String temporaryPassword =
+//                passwordGenerator.generate(10);
+//
+//
+//        // BCrypt 암호화
+//        String encodedPassword =
+//                passwordEncoder.encode(
+//                        temporaryPassword
+//                );
+//
+//
+//        employee.setEmpPwd(encodedPassword);
+//
+//        employee.setPwChgRequired(true);
+//
+//
+//        // 이메일 발송
+//        if (employee.getEmail() != null) {
+//
+//            mailService.sendTemporaryPassword(
+//                    employee.getEmail(),
+//                    employee.getEmpName(),
+//                    employee.getEmpId(),
+//                    temporaryPassword
+//            );
+//        }
+//    }
+
+
+    // =========================================================
+    // USR-005
+    // 마이페이지
+    // =========================================================
+
+    @Override
+    public EmployeeResponse getMyInfo(
+            Integer empNo
+    ) {
+
+        Employee employee =
+        		employeeDao.findById(empNo)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "존재하지 않는 사용자입니다."
+                                )
+                        );
+
+        return convertToResponse(employee);
+    }
+
+
+    // =========================================================
+    // USR-006
+    // 사용자 정보 수정
+    // =========================================================
+
+    @Override
+    @Transactional
+    public EmployeeResponse updateEmployee(
+            Integer empNo,
+            EmployeeUpdateRequest request
+    ) {
+
+        Employee employee =
+        		employeeDao.findById(empNo)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "존재하지 않는 사용자입니다."
+                                )
+                        );
+
+
+        employee.setEmpName(
+                request.getEmpName()
+        );
+
+        employee.setPhone(
+                request.getPhone()
+        );
+
+        employee.setEmail(
+                request.getEmail()
+        );
+
+        employee.setAddress(
+                request.getAddress()
+        );
+
+
+        return convertToResponse(employee);
+    }
+
+
+    // =========================================================
+    // USR-007
+    // 계정 상태 변경
+    // =========================================================
+
+    @Override
+    @Transactional
+    public void updateEmployeeStatus(
+            Integer empNo,
+            String status
+    ) {
+
+        Employee employee =
+        		employeeDao.findById(empNo)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "존재하지 않는 사용자입니다."
+                                )
+                        );
+
+
+        employee.setStatus(status);
+    }
+
+
+    // =========================================================
+    // USR-008
+    // 계정 목록 조회
+    // =========================================================
+
+    @Override
+    public List<EmployeeResponse> getEmployeeList() {
+
+        return employeeDao.findAll()
+                .stream()
+                .map(this::convertToResponse)
+                .toList();
+    }
+
+    // =========================================================
+    // USR-009
+    // 계정 ID 찾기
+    // =========================================================
+    @Override
+    public FindIdResponse findEmployeeId(
+            FindIdRequest request
+    ) {
+
+        /*
+         * 이름 + 이메일로 직원 조회
+         */
+        Employee employee =
+                employeeDao
+                        .findByEmpNameAndEmail(
+                                request.getEmpName(),
+                                request.getEmail()
+                        )
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "입력하신 정보와 일치하는 계정을 찾을 수 없습니다."
+                                )
+                        );
+
+
+        /*
+         * 아이디 마스킹
+         */
+        String maskedEmpId =
+                maskEmpId(employee.getEmpId());
+
+
+        /*
+         * 응답
+         */
+        return new FindIdResponse(
+                maskedEmpId
+        );
+    }
+    
+    // 아이디 마스킹 처리
+    private String maskEmpId(String empId) {
+
+        if (empId == null || empId.isEmpty()) {
+            return "";
+        }
+
+        int length = empId.length();
+
+
+        /*
+         * 1~2자리
+         */
+        if (length <= 2) {
+
+            return empId.charAt(0) + "*";
+        }
+
+
+        /*
+         * 3자리
+         */
+        if (length == 3) {
+
+            return empId.charAt(0)
+                    + "*"
+                    + empId.charAt(2);
+        }
+
+
+        /*
+         * 4자리 이상
+         *
+         * 앞 2자리 + * + 뒤 2자리
+         */
+        int visibleFront = 2;
+        int visibleBack = 2;
+
+        int maskLength =
+                length - visibleFront - visibleBack;
+
+        return empId.substring(
+                    0,
+                    visibleFront
+                )
+                + "*".repeat(maskLength)
+                + empId.substring(
+                    length - visibleBack
+                );
+    }
+
+
+    // =========================================================
+    // USR-010
+    // 계정 상세 조회
+    // =========================================================
+
+    @Override
+    public EmployeeResponse getEmployee(
+            Integer empNo
+    ) {
+
+        Employee employee =
+        		employeeDao.findById(empNo)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "존재하지 않는 사용자입니다."
+                                )
+                        );
+
+        return convertToResponse(employee);
+    }
+
+
+    // =========================================================
+    // USR-011
+    // 사원 역할 변경
+    // =========================================================
+
+    @Override
+    @Transactional
+    public void updateEmployeeRole(
+            Integer empNo,
+            EmployeeRoleUpdateRequest request
+    ) {
+
+        Employee employee =
+        		employeeDao.findById(empNo)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "존재하지 않는 사용자입니다."
+                                )
+                        );
+
+
+        employee.setAuthCode(request.getAuthCode());
+        employee.setDepId(request.getDepId());
+        employee.setJobCode(request.getJobCode());
+    }
+
+
+    // =========================================================
+    // 비밀번호 찾기 - 1단계
+    // 인증번호 발송
+    // =========================================================
+
+    @Override
+    @Transactional
+    public void requestPasswordReset(
+            PasswordResetRequest request
+    ) {
+
+        Employee employee =
+                employeeDao.findByEmpIdAndEmail(
+                        request.getEmpId(),
+                        request.getEmail()
+                )
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "입력하신 정보와 일치하는 계정을 찾을 수 없습니다."
+                        )
+                );
+
+        if (!"Y".equals(employee.getStatus())) {
+
+            throw new IllegalStateException(
+                    "현재 사용할 수 없는 계정입니다."
+            );
+        }
+
+        String verificationCode =
+                generateVerificationCode();
+
+        Verification verification =
+                new Verification();
+
+        verification.setVerificationCode(verificationCode);
+        verification.setExpiresAt(
+                LocalDateTime.now()
+                        .plusMinutes(VERIFICATION_CODE_VALID_MINUTES)
+        );
+        verification.setCreatedAt(LocalDateTime.now());
+        verification.setEmployee(employee);
+
+        verificationDao.save(verification);
+
+        mailService.sendVerificationCode(
+                employee.getEmail(),
+                employee.getEmpName(),
+                verificationCode
+        );
+    }
+
+
+    // =========================================================
+    // 비밀번호 찾기 - 2단계
+    // 인증번호 확인 후 임시 비밀번호 발급
+    // =========================================================
+
+    @Override
+    @Transactional
+    public void verifyPasswordResetCode(
+            PasswordResetVerifyRequest request
+    ) {
+
+        Employee employee =
+                employeeDao.findByEmpId(request.getEmpId())
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "존재하지 않는 계정입니다."
+                                )
+                        );
+
+        Verification verification =
+                verificationDao
+                        .findTopByEmployee_EmpNoAndVerificationCodeOrderByCreatedAtDesc(
+                                employee.getEmpNo(),
+                                request.getVerificationCode()
+                        )
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "인증번호가 올바르지 않습니다."
+                                )
+                        );
+
+        if (verification.getVerifiedAt() != null) {
+
+            throw new IllegalArgumentException(
+                    "이미 사용된 인증번호입니다."
+            );
+        }
+
+        if (verification.getExpiresAt()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new IllegalArgumentException(
+                    "인증번호가 만료되었습니다. 다시 요청해주세요."
+            );
+        }
+
+        verification.setVerifiedAt(LocalDateTime.now());
+        verificationDao.save(verification);
+
+        String temporaryPassword =
+                passwordGenerator.generate(10);
+
+        String encodedPassword =
+                passwordEncoder.encode(temporaryPassword);
+
+        employee.setEmpPwd(encodedPassword);
+        employee.setPwChgRequired(true);
+
+        employeeDao.save(employee);
+
+        mailService.sendTemporaryPassword(
+                employee.getEmail(),
+                employee.getEmpName(),
+                employee.getEmpId(),
+                temporaryPassword
+        );
+    }
+
+
+    // 6자리 숫자 인증번호 생성
+    private String generateVerificationCode() {
+
+        int code =
+                secureRandom.nextInt(900000) + 100000;
+
+        return String.valueOf(code);
+    }
+
+
+    // =========================================================
+    // Entity → DTO 변환
+    // =========================================================
+
+    private EmployeeResponse convertToResponse(
+            Employee employee
+    ) {
+
+        return EmployeeResponse.builder()
+                .empNo(employee.getEmpNo())
+                .empId(employee.getEmpId())
+                .empName(employee.getEmpName())
+                .phone(employee.getPhone())
+                .email(employee.getEmail())
+                .address(employee.getAddress())
+                .joinAt(employee.getJoinAt())
+                .endAt(employee.getEndAt())
+                .status(employee.getStatus())
+                .pwChgRequired(
+                        employee.getPwChgRequired()
+                )
+                .depId(employee.getDepId())
+                .authCode(employee.getAuthCode())
+                .jobCode(employee.getJobCode())
+                .build();
+    }
+	
+}

@@ -1,0 +1,618 @@
+/* ========================================
+   WorkFlow Header
+======================================== */
+
+.wf-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  width: 100%;
+  height: 76px;
+
+  background: #ffffff;
+  border-bottom: 1px solid var(--wf-border);
+}
+
+.wf-header-inner {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 32px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   Logo
+======================================== */
+
+.wf-logo {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  width: 225px;
+
+  cursor: pointer;
+}
+
+.wf-logo-mark {
+  position: relative;
+
+  width: 42px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 8px;
+}
+
+.logo-w {
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: -7px;
+
+  transform: scaleX(1.05);
+}
+
+.logo-w-blue {
+  background: linear-gradient(
+    135deg,
+    #2878e8 10%,
+    #37b5a5 55%,
+    #78c85c 100%
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.wf-logo-text {
+  color: var(--wf-text-primary);
+
+  font-size: 28px;
+  font-weight: 800;
+
+  letter-spacing: -1.5px;
+}
+
+
+/* ========================================
+   Navigation
+======================================== */
+
+.wf-nav {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  flex: 1;
+}
+
+.wf-nav-item {
+  position: relative;
+
+  height: 100%;
+
+  padding: 0 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: none;
+  background: transparent;
+
+  color: var(--wf-text-secondary);
+
+  font-size: 15px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.wf-nav-item:hover {
+  color: var(--wf-primary);
+}
+
+.wf-nav-item.active {
+  color: var(--wf-primary);
+}
+
+.wf-nav-item.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 15px;
+  right: 15px;
+  bottom: 0;
+
+  height: 3px;
+
+  background: var(--wf-primary);
+
+  border-radius: 3px 3px 0 0;
+}
+
+.wf-nav-icon {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 19px;
+
+  color: var(--wf-text-primary);
+}
+
+.wf-nav-item.active .wf-nav-icon {
+  color: var(--wf-primary);
+}
+
+
+/* ========================================
+   Header Actions
+======================================== */
+
+.wf-header-actions {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
+
+
+/* ========================================
+   Notification
+======================================== */
+
+.wf-notification {
+  position: relative;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.wf-notification:hover {
+  background: #f3f7fc;
+}
+
+.notification-icon {
+  font-size: 25px;
+  color: var(--wf-text-primary);
+}
+
+.notification-badge {
+  position: absolute;
+
+  top: 2px;
+  right: 1px;
+
+  min-width: 17px;
+  height: 17px;
+
+  padding: 0 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: var(--wf-primary);
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   Profile
+======================================== */
+
+.wf-profile {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 4px 0;
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.wf-profile-image {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #dcecff,
+    #c8e8df
+  );
+
+  color: var(--wf-text-primary);
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.wf-profile-info {
+  min-width: 70px;
+}
+
+.wf-profile-name {
+  color: var(--wf-text-primary);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.wf-profile-name span {
+  margin-left: 3px;
+
+  color: var(--wf-gray-600);
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.wf-profile-department {
+  margin-top: 3px;
+
+  color: var(--wf-text-muted);
+
+  font-size: 11px;
+}
+
+.wf-profile-arrow {
+  margin-left: 2px;
+
+  color: var(--wf-text-secondary);
+
+  font-size: 17px;
+}
+
+
+/* ========================================
+   Tablet
+======================================== */
+
+@media (max-width: 1250px) {
+
+  .wf-header-inner {
+    padding: 0 20px;
+  }
+
+  .wf-logo {
+    width: 190px;
+  }
+
+  .wf-logo-text {
+    font-size: 24px;
+  }
+
+  .wf-nav-item {
+    padding: 0 10px;
+
+    font-size: 13px;
+  }
+
+  .wf-nav-icon {
+    font-size: 17px;
+  }
+
+  .wf-profile-info {
+    display: none;
+  }
+}
+
+
+/* ========================================
+   Mobile
+======================================== */
+
+@media (max-width: 900px) {
+
+  .wf-header {
+    height: 64px;
+  }
+
+  .wf-logo {
+    width: auto;
+  }
+
+  .wf-logo-text {
+    font-size: 22px;
+  }
+
+  .wf-nav {
+    display: none;
+  }
+
+  .wf-header-inner {
+    justify-content: space-between;
+  }
+
+  .wf-header-actions {
+    margin-left: auto;
+  }
+}
+
+/* ==== */
+
+/* 프로필 전체 영역 */
+.wf-profile-wrapper {
+    position: relative;
+}
+
+
+/* 프로필 버튼 */
+.wf-profile {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+
+/* 프로필 드롭다운 */
+.wf-profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+
+    width: 180px;
+
+    background: var(--wf-white);
+
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius-sm);
+
+    box-shadow: var(--wf-shadow);
+
+    padding: 6px 0;
+
+    z-index: 1000;
+}
+
+
+/* 드롭다운 메뉴 */
+.wf-profile-dropdown button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 16px;
+
+    border: none;
+    background: transparent;
+
+    font-size: 14px;
+    color: var(--wf-text-primary);
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+/* hover */
+.wf-profile-dropdown button:hover {
+    background: var(--wf-gray-50);
+}
+
+
+/* 로그아웃 */
+.wf-profile-dropdown .logout-button {
+    color: var(--wf-danger);
+}
+
+
+/* 구분선 */
+.wf-profile-divider {
+    height: 1px;
+
+    margin: 5px 0;
+
+    background: var(--wf-gray-200);
+}
+
+/* ========================================
+   Navigation
+========================================= */
+.wf-nav {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+}
+
+
+/* 각각의 메뉴 영역 */
+
+.wf-nav-dropdown {
+    position: relative;
+    height: 100%;
+}
+
+
+/* 상위 메뉴 */
+
+.wf-nav-item {
+    height: 100%;
+    padding: 0 20px;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 14px;
+}
+
+
+/* 상위 메뉴 hover */
+
+.wf-nav-item:hover {
+    background-color: var(--wf-gray-50);
+}
+
+
+/* 활성 메뉴 */
+
+.wf-nav-item.active {
+    font-weight: 600;
+}
+
+
+/* ========================================
+   Sub Menu
+======================================== */
+
+.wf-submenu {
+
+    position: absolute;
+
+    top: 100%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    min-width: 150px;
+
+    background: white;
+
+    border: 1px solid var(--wf-border);
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.12);
+
+    padding: 6px 0;
+
+    z-index: 1000;
+
+
+    /* 기본적으로 숨김 */
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+        translateX(-50%)
+        translateY(-5px);
+
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0.15s;
+}
+
+
+/* ========================================
+   상위 메뉴 hover → 하위 메뉴 표시
+======================================== */
+
+.wf-nav-dropdown:hover .wf-submenu {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* ========================================
+   하위 메뉴 버튼
+======================================== */
+
+.wf-submenu button {
+
+    display: block;
+
+    width: 100%;
+
+    padding: 11px 18px;
+
+    border: none;
+
+    background: white;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+
+/* 하위 메뉴 hover */
+
+.wf-submenu button:hover {
+
+    background-color: var(--wf-gray-50);
+}

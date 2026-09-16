@@ -1,0 +1,58 @@
+/* 테이블 영역 */
+.employeeTableWrapper {
+    width: 100%;
+
+    background: var(--wf-white);
+
+    border: 1px solid var(--wf-border);
+    border-radius: var(--wf-radius-lg);
+
+    overflow: hidden;
+}
+
+/* 테이블 */
+.employeeTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 14px;
+}
+
+/* 헤더 */
+.employeeTable thead {
+    background-color: var(--wf-table-header-bg);
+}
+
+.employeeTable th {
+    height: 46px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--wf-text-secondary);
+    text-align: center;
+    border-bottom: 1px solid var(--wf-border);
+}
+
+/* 데이터 */
+.employeeTable td {
+    height: 56px;
+    text-align: center;
+    border-bottom: 1px solid var(--wf-border);
+    color: var(--wf-text-primary);
+}
+
+/* 행 */
+.employeeTable tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.employeeTable tbody tr:hover {
+    background-color: var(--wf-row-hover);
+}
+
+/* 데이터가 없을 때 */
+.employeeTable .emptyEmployee {
+    height: 120px;
+    color: var(--wf-text-muted);
+    cursor: default;
+}

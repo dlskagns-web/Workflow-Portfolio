@@ -1,0 +1,248 @@
+/* =========================
+   Reservation Detail
+========================= */
+
+.reservation-detail-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 30px 60px;
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.reservation-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.reservation-detail-header h2 {
+    margin: 0;
+
+    font-size: var(--wf-fs-page-title);
+    font-weight: 700;
+    color: var(--wf-text-primary);
+}
+
+
+/* =========================
+   Status
+========================= */
+
+.reservation-detail-status {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 13px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.reservation-detail-status.status-N {
+    background-color: var(--wf-info-bg);
+    color: var(--wf-primary);
+}
+
+.reservation-detail-status.status-C {
+    background-color: var(--wf-danger-bg);
+    color: var(--wf-danger);
+}
+
+.reservation-detail-status.status-Y {
+    background-color: var(--wf-success-bg);
+    color: var(--wf-success);
+}
+
+
+/* =========================
+   Card
+========================= */
+
+.reservation-detail-card {
+    overflow: hidden;
+
+    border: 1px solid var(--wf-border);
+    border-radius: 12px;
+
+    background-color: var(--wf-white);
+}
+
+
+/* =========================
+   Section
+========================= */
+
+.reservation-detail-section {
+    padding: 25px;
+
+    border-bottom: 1px solid var(--wf-border);
+}
+
+.reservation-detail-section:last-child {
+    border-bottom: none;
+}
+
+.reservation-detail-section h3 {
+    margin: 0 0 20px;
+
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--wf-text-primary);
+}
+
+
+/* =========================
+   Info
+========================= */
+
+.reservation-detail-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.reservation-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.reservation-info-label {
+    font-size: 12px;
+    color: var(--wf-text-muted);
+}
+
+.reservation-info-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--wf-text-primary);
+}
+
+
+/* =========================
+   Hub
+========================= */
+
+.reservation-hub-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reservation-hub-detail-name {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--wf-text-primary);
+}
+
+.reservation-hub-detail-address {
+    font-size: 14px;
+    color: var(--wf-text-secondary);
+}
+
+
+/* =========================
+   Actions
+========================= */
+
+.reservation-detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.reservation-detail-actions button {
+    height: 42px;
+    padding: 0 22px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.reservation-back-button {
+    border: 1px solid var(--wf-gray-300);
+    background-color: var(--wf-white);
+    color: var(--wf-text-secondary);
+}
+
+.reservation-update-button {
+    border: none;
+    background-color: var(--wf-primary);
+    color: white;
+}
+
+.reservation-update-button:hover {
+    background-color: var(--wf-primary-dark);
+}
+
+.reservation-cancel-button-danger {
+    border: 1px solid #f3c8c8;
+    background-color: var(--wf-white);
+    color: var(--wf-danger);
+}
+
+.reservation-cancel-button-danger:hover {
+    background-color: var(--wf-danger-bg);
+}
+
+
+/* =========================
+   Loading
+========================= */
+
+.reservation-detail-loading {
+    padding: 80px 20px;
+
+    text-align: center;
+
+    color: var(--wf-text-muted);
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 768px) {
+
+    .reservation-detail-container {
+        padding: 25px 16px 40px;
+    }
+
+    .reservation-detail-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .reservation-detail-header h2 {
+        font-size: 23px;
+    }
+
+    .reservation-detail-info {
+        grid-template-columns: 1fr;
+    }
+
+    .reservation-detail-actions {
+        flex-direction: column;
+    }
+
+    .reservation-detail-actions button {
+        width: 100%;
+    }
+}

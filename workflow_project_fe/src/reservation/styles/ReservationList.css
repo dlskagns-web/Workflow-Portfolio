@@ -1,0 +1,227 @@
+/* =========================
+   Reservation List
+========================= */
+
+.reservation-list-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 30px;
+    box-sizing: border-box;
+}
+
+/* 헤더 */
+.reservation-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.reservation-list-header h2 {
+    margin: 0;
+    font-size: var(--wf-fs-page-title);
+    font-weight: 800;
+    color: var(--wf-text-primary);
+}
+
+.reservation-enroll-button {
+    height: 42px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 9px;
+    background-color: var(--wf-primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.reservation-enroll-button:hover {
+    background-color: var(--wf-primary-dark);
+}
+
+/* 필터 */
+.reservation-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.reservation-filter button {
+    padding: 9px 18px;
+    border: 1px solid var(--wf-gray-300);
+    border-radius: 20px;
+    background-color: white;
+    color: var(--wf-text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reservation-filter button:hover {
+    border-color: var(--wf-primary);
+    color: var(--wf-primary);
+}
+
+.reservation-filter button.active {
+    border-color: var(--wf-primary);
+    background-color: var(--wf-primary);
+    color: white;
+}
+
+/* 목록 */
+.reservation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* 빈 목록 */
+.reservation-empty {
+    padding: 80px 20px;
+    text-align: center;
+    border: 1px solid var(--wf-border);
+    border-radius: 12px;
+    background-color: var(--wf-white);
+    color: var(--wf-text-muted);
+}
+
+.reservation-empty p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* 로딩 */
+.reservation-loading {
+    padding: 80px 20px;
+    text-align: center;
+    color: var(--wf-text-muted);
+}
+
+
+/* =========================
+   Reservation Item
+========================= */
+
+.reservation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 22px 25px;
+
+    border: 1px solid var(--wf-border);
+    border-radius: 12px;
+
+    background-color: var(--wf-white);
+
+    cursor: pointer;
+
+    transition:
+        box-shadow 0.2s,
+        transform 0.2s,
+        border-color 0.2s;
+}
+
+.reservation-item:hover {
+    border-color: #cfdff5;
+    box-shadow: var(--wf-shadow);
+    transform: translateY(-2px);
+}
+
+/* 왼쪽 정보 */
+.reservation-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.reservation-item-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reservation-item-title h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--wf-text-primary);
+}
+
+.reservation-item-date {
+    font-size: 14px;
+    color: var(--wf-text-secondary);
+}
+
+.reservation-item-capacity {
+    font-size: 13px;
+    color: var(--wf-text-muted);
+}
+
+/* 상태 */
+.reservation-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 52px;
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.reservation-status.status-N {
+    background-color: var(--wf-info-bg);
+    color: var(--wf-info);
+}
+
+.reservation-status.status-C {
+    background-color: var(--wf-danger-bg);
+    color: var(--wf-danger);
+}
+
+.reservation-status.status-Y {
+    background-color: var(--wf-success-bg);
+    color: var(--wf-success);
+}
+
+/* 오른쪽 */
+.reservation-item-arrow {
+    color: var(--wf-text-muted);
+    font-size: 22px;
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 768px) {
+
+    .reservation-list-container {
+        padding: 25px 16px;
+    }
+
+    .reservation-list-header h2 {
+        font-size: 23px;
+    }
+
+    .reservation-enroll-button {
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+
+    .reservation-item {
+        padding: 18px;
+    }
+
+    .reservation-item-title h3 {
+        font-size: 16px;
+    }
+}

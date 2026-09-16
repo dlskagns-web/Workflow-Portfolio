@@ -1,0 +1,242 @@
+import axiosInstance from "../../common/api/axiosInstance";
+
+/*
+ * USR-001
+ * 계정 등록
+ */
+export const createEmployee = async (employeeData) => {
+
+    const response = await axiosInstance.post(
+        "/employees",
+        employeeData
+    );
+
+    return response.data;
+};
+
+/*
+ * 아이디 중복 확인
+ */
+export const checkEmpIdDuplicate = async (empId) => {
+
+    const response = await axiosInstance.get(
+        "/employees/checkId",
+        {
+            params: {
+                empId,
+            },
+        }
+    );
+
+    return response.data;
+}
+
+/*
+ * USR-002
+ * 사용자 로그인
+ */
+export const login = async (loginData) => {
+
+    const response = await axiosInstance.post(
+        "/employees/login",
+        loginData
+    );
+
+    return response.data;
+};
+
+/*
+ * USR-003
+ * 사용자 로그아웃
+ */
+export const logout = async () => {
+
+    const token =
+        localStorage.getItem("accessToken");
+
+    const response = await axiosInstance.post(
+        "/employees/logout",
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    return response.data;
+};
+
+/*
+ * USR-004
+ * 비밀번호 재설정
+ */
+export const changePassword = async (data) => {
+
+    const token =
+        localStorage.getItem("accessToken");
+
+    const response = await axiosInstance.put(
+        "/employees/password",
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    return response.data;
+};
+
+/*
+ * USR-005
+ * 마이페이지 / 사용자 상세 조회
+ */
+export const getEmployee = async (empNo) => {
+
+    const response = await axiosInstance.get(
+        `/employees/${empNo}`
+    );
+
+    return response.data;
+};
+
+
+/*
+ * USR-006
+ * 사용자 정보 수정
+ */
+export const updateEmployee = async (
+    empNo,
+    employeeData
+) => {
+
+    const response = await axiosInstance.put(
+        `/employees/${empNo}`,
+        employeeData
+    );
+
+    return response.data;
+};
+
+
+/*
+ * USR-007
+ * 계정 상태 변경
+ */
+export const updateEmployeeStatus = async (
+    empNo,
+    status
+) => {
+
+    const response = await axiosInstance.patch(
+        `/employees/${empNo}/status`,
+        null,
+        {
+            params: {
+                status,
+            },
+        }
+    );
+
+    return response.data;
+};
+
+
+/*
+ * USR-008
+ * 계정 목록 조회
+ */
+export const getEmployeeList = async () => {
+
+    const token =
+        localStorage.getItem("accessToken");
+
+    const response = await axiosInstance.get(
+        "/employees",
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    return response.data;
+};
+
+
+/*
+ * USR-011
+ * 사원 역할 변경
+ */
+export const updateEmployeeRole = async (
+    empNo,
+    { authCode, depId, jobCode }
+) => {
+
+    // 백엔드 EmployeeServiceImpl.updateEmployeeRole()가 요청 DTO의 세 필드를
+    // 무조건 그대로 엔티티에 덮어쓰므로, depId/jobCode를 빠뜨리면 NOT NULL
+    // 제약조건 위반으로 실패한다. 변경하지 않는 값도 항상 함께 보내야 한다.
+    const response = await axiosInstance.patch(
+        `/employees/${empNo}/role`,
+        {
+            authCode,
+            depId,
+            jobCode,
+        }
+    );
+
+    return response.data;
+};
+
+/*
+ * USR-009
+ * 아이디 찾기
+ */
+export const findEmployeeId = async ({ empName, email }) => {
+
+    const response = await axiosInstance.post(
+        "/employees/findId",
+        {
+            empName,
+            email,
+        }
+    );
+
+    return response.data;
+};
+
+/*
+ * 비밀번호 찾기 - 1단계
+ * 인증번호 발송 요청
+ */
+export const requestPasswordReset = async ({ empId, email }) => {
+
+    const response = await axiosInstance.post(
+        "/employees/password/reset/request",
+        {
+            empId,
+            email,
+        }
+    );
+
+    return response.data;
+};
+
+/*
+ * 비밀번호 찾기 - 2단계
+ * 인증번호 확인 및 임시 비밀번호 발급
+ */
+export const verifyPasswordResetCode = async ({ empId, verificationCode }) => {
+
+    const response = await axiosInstance.post(
+        "/employees/password/reset/verify",
+        {
+            empId,
+            verificationCode,
+        }
+    );
+
+    return response.data;
+};

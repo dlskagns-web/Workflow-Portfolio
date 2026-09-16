@@ -1,0 +1,158 @@
+/*배경을 어둡게 처리하고 클릭시 닫힘*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(18, 30, 51, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/*모달 전체 박스*/
+.modal-content {
+    background-color: var(--wf-white);
+    padding: 0;
+    border-radius: var(--wf-radius-xl);
+    width: 700px;
+    max-width: 90%;
+    box-shadow: var(--wf-shadow-lg);
+    overflow: hidden;
+}
+
+/*상단 제목*/
+.modal-header {
+    background-color: var(--wf-table-header-bg);
+    width: 100%;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.modal-header h2 {
+    padding: 0;
+    text-align: center;
+    margin: 0;
+
+    color: var(--wf-text-primary);
+
+    font-size: 18px;
+    font-weight: 800;
+}
+
+/*레이아웃 좌우 분할*/
+.calender-schedule {
+    display: flex;
+    padding: 25px;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/*달력 영역*/
+.calender-content {
+    flex: 1;
+}
+
+/*외부 라이브러리 커스텀*/
+.react-calendar {
+    width: 100% !important;
+    border: none !important;
+    border-radius: var(--wf-radius-lg);
+    box-shadow: var(--wf-shadow-sm);
+    padding: 12px;
+}
+
+/*일정 영역*/
+.schedule-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+/*부서일정 & 나의 일정 박스 스타일*/
+.schedule-style,
+.mySchedule-style {
+    flex: 1;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/*부일정, 나의 일정 회색띠*/
+.schedule-header,
+.mySchedule-header {
+    background-color: var(--wf-table-header-bg);
+    border-radius: var(--wf-radius-lg);
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--wf-text-primary);
+    box-sizing: border-box;
+}
+
+/*리스트가 넘칠시 스크롤 생성*/
+.schedule-list{
+    height: 152px !important;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mySchedule-list {
+    height: 76px !important;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/*일정목록 테스트 & 하단 구분선*/
+.schedule-list p,
+.mySchedule-list p {
+    margin: 0;
+    height: 42px;
+    line-height: 38px;
+    padding: 0 8px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--wf-border);
+    color: var(--wf-text-primary);
+}
+
+/* 스크롤바 디자인 (선택 사항: 얇고 깔끔하게) */
+.schedule-list::-webkit-scrollbar,
+.mySchedule-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.schedule-list::-webkit-scrollbar-thumb,
+.mySchedule-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 6px;
+}
+.schedule-list {
+    width: 100%;
+    text-align: center;
+}
+
+
+ .schedule-list p {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 8px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #142d50;
+    font-size: 13px;
+}
