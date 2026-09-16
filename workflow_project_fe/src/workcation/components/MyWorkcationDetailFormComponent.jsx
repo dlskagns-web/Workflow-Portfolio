@@ -131,10 +131,13 @@ function MyWorkcationDetailFormComponent() {
 
         // BUG-13: 이미 부서장/관리자가 승인 완료(Y)한 업무는 백엔드에서도 수정을
         // 막아뒀으므로, 열어봐야 저장 시점에 실패하는 것보다 먼저 안내한다.
-        if (task.status === "Y") {
-            alert("이미 승인 완료된 업무는 수정할 수 없습니다.");
-            return;
-        }
+
+        /* 읽기 용도로만 불러오기위해 제거
+          if (task.status === "Y") {
+              alert("이미 승인 완료된 업무는 수정할 수 없습니다.");
+              return;
+          } 
+          */
 
         setSelectedTask(task);
         setTaskProgress(task.progress ?? 0);
@@ -212,6 +215,20 @@ function MyWorkcationDetailFormComponent() {
             console.error("업무 저장 실패:", error);
             alert("업무 저장 중 오류가 발생했습니다.");
         }
+    };
+
+    //날짜 함수
+    const formatActivityDate = (date) => {
+        if (!date) return "";
+
+        const d = new Date(date);
+
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const hour = String(d.getHours()).padStart(2, "0");
+        const minute = String(d.getMinutes()).padStart(2, "0");
+
+        return `${month}-${day} ${hour}:${minute}`;
     };
 
     // 첨부파일 삭제
@@ -632,6 +649,9 @@ function MyWorkcationDetailFormComponent() {
                             <div
                                 className="modal-progress-bar-bg"
                                 onMouseDown={(e) => {
+                                    if (selectedTask?.status === "Y") return; 
+                                    //승인 완료시 클릭불가
+
                                     e.preventDefault();
                                     setIsDragging(true);
                                     handleProgressChange(e);
@@ -684,12 +704,13 @@ function MyWorkcationDetailFormComponent() {
                                                 key={activity.historyNo}
                                                 className="activity-item"
                                             >
+                                                {/* activity.title 을 삭제하여 차단. */}
                                                 <span>
-                                                    {activity.title}
+                                                    {activity.content}
                                                 </span>
 
                                                 <span>
-                                                    {activity.createdAt}
+                                                    {formatActivityDate(activity.createdAt)}
                                                 </span>
 
                                                 <span>
@@ -707,19 +728,19 @@ function MyWorkcationDetailFormComponent() {
 
                             <input
                                 type="text"
-                                placeholder="오늘 처리한 업무의 이름이나 종류를 입력해주세요."
                                 value={taskReportTitle}
                                 onChange={(e) =>
-                                    setTaskReportTitle(e.target.value)
-                                }
+                                    setTaskReportTitle(e.target.value)}
+                                readOnly={selectedTask?.status === "Y"}
+                                placeholder="오늘 처리한 업무의 이름이나 종류를 입력해주세요."
                             />
 
                             <textarea
-                                placeholder="오늘 처리한 업무 내용을 작성해주세요."
                                 value={taskReportContent}
                                 onChange={(e) =>
-                                    setTaskReportContent(e.target.value)
-                                }
+                                    setTaskReportContent(e.target.value)}
+                                readOnly={selectedTask?.status === "Y"}
+                                placeholder="오늘 처리한 업무 내용을 작성해주세요."
                             />
                         </div>
 
@@ -733,6 +754,7 @@ function MyWorkcationDetailFormComponent() {
                                 취소
                             </button>
 
+                                    {selectedTask?.status !== "Y" &&(
                             <button
                                 type="button"
                                 className="btn btn-primary"
@@ -741,6 +763,7 @@ function MyWorkcationDetailFormComponent() {
                             >
                                 저장
                             </button>
+                            )}
                         </div>
 
                     </div>

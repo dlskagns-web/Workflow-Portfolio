@@ -273,7 +273,10 @@ public class TaskServiceImpl implements TaskService {
 			TaskHistory history = new TaskHistory();
 
 			history.setTask(task);
-			history.setHistoryTitle("거부 사유");
+			/*
+			 * history.setHistoryTitle("거부사유"); 불필요한 데이터를 지움
+			 * 기존 DB에서 NOTNULL을 NULL로 변경함
+			 */
 			history.setHistoryContent(content);
 			history.setProgress(task.getProgress());
 

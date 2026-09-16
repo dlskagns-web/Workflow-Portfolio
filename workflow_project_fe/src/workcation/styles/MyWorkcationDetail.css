@@ -454,3 +454,24 @@
     padding: 8px 16px;
     cursor: pointer;
 }
+
+.activity-date {
+    white-space: nowrap;
+}
+
+.activity-progress {
+    white-space: nowrap;
+}
+
+.activity-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 78px 70px;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 12px;
+}
+
+.activity-date,
+.activity-progress {
+    white-space: nowrap;
+}

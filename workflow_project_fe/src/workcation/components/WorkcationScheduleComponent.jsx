@@ -107,7 +107,7 @@ const formatScheduleDate = (date) => {
                                 ) : (
                                     departmentSchedule.map((item) => (
                                         <p key={item.workcationNo}>
-                                            [{item.jobName}] {item.empName}{" "}
+                                            [{item.depTitle}] {item.jobName} {item.empName}{" "}
                                             {formatScheduleDate(item.startAt)}
                                             {" ~ "}
                                             {formatScheduleDate(item.endAt)}
@@ -127,7 +127,7 @@ const formatScheduleDate = (date) => {
                                 ) : (
                                     mySchedule.map((item) => (
                                         <p key={item.workcationNo}>
-                                            [{item.jobName}] {item.empName}{" "}
+                                            [{item.depTitle}] {item.jobName} {item.empName}{" "}
                                             {formatScheduleDate(item.startAt)}
                                             {" ~ "}
                                             {formatScheduleDate(item.endAt)}

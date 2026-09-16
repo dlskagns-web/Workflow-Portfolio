@@ -101,6 +101,7 @@ public interface ApprovalDao extends JpaRepository<WorkcationInfo, Integer> {
 			            AND w.endAt < :endDate
 			        )
 			    )
+			    ORDER BY w.workcationNo DESC
 			""")
 	Page<WorkcationInfo> searchApprovalQueue(@Param("authCode") String authCode, @Param("empNo") Integer empNo,
 			@Param("depId") String depId, @Param("excludedStates") List<String> excludedStates,
